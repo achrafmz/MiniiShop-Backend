@@ -5,6 +5,7 @@ import com.minishop.user_service.payload.LoginRequest;
 import com.minishop.user_service.payload.RegisterRequest;
 import com.minishop.user_service.repository.UserRepository;
 import com.minishop.user_service.security.JwtUtil;
+import com.minishop.user_service.service.EmailService;
 import com.minishop.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,17 +27,27 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already taken");
         }
+
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+
         userRepository.save(user);
+
+        // 📧 Envoie un email de confirmation
+        emailService.sendRegistrationConfirmation(request.getEmail(), request.getUsername());
+
         return ResponseEntity.ok("User registered successfully");
     }
 
