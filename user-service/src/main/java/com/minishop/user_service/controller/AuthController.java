@@ -1,6 +1,7 @@
 package com.minishop.user_service.controller;
 
 import com.minishop.user_service.model.User;
+import com.minishop.user_service.payload.GoogleLoginRequest;
 import com.minishop.user_service.payload.LoginRequest;
 import com.minishop.user_service.payload.RegisterRequest;
 import com.minishop.user_service.repository.UserRepository;
@@ -15,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -63,4 +67,56 @@ public class AuthController {
         }
         return ResponseEntity.ok("Login successful. Welcome " + user.getUsername());
     }
+
+//    @PostMapping("/google-login")
+//    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
+//        try {
+//            // 🔍 Vérifie le token Google
+//            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(),
+//                    JacksonFactory.getDefaultInstance())
+//                    .setAudience(Collections.singletonList("TON_CLIENT_ID_GOOGLE"))
+//                    .build();
+//
+//            GoogleIdToken idToken = verifier.verify(request.getIdToken());
+//            if (idToken == null) {
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token invalide");
+//            }
+//
+//            GoogleIdToken.Payload payload = idToken.getPayload();
+//
+//            String email = payload.getEmail();
+//            String firstName = (String) payload.get("given_name");
+//            String lastName = (String) payload.get("family_name");
+//
+//            // 🧑 Trouve ou crée l’utilisateur dans ta base
+//            User user = userRepository.findByEmail(email)
+//                    .orElseGet(() -> {
+//                        User newUser = new User();
+//                        newUser.setEmail(email);
+//                        newUser.setFirstName(firstName);
+//                        newUser.setLastName(lastName);
+//                        newUser.setUsername(email.split("@")[0]);
+//                        newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+//                        return userRepository.save(newUser);
+//                    });
+//
+//            // 🔐 Génère ton propre JWT
+//            String myJwtToken = JwtUtil.generateToken(user.getUsername());
+//
+//            return ResponseEntity.ok()
+//                    .header("Authorization", "Bearer " + myJwtToken)
+//                    .body("Connexion réussie avec Google");
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Échec de l’authentification Google");
+//        }
+//    }
+
+    private String generateUsernameFromEmail(String email) {
+        String baseUsername = email.split("@")[0];
+        return userRepository.findByUsername(baseUsername).isPresent()
+                ? baseUsername + System.currentTimeMillis() % 1000
+                : baseUsername;
+    }
+
 }
