@@ -7,10 +7,10 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String secret = "secretKey";
-    private final long expirationMs = 86400000;
+    private static final String secret = "secretKey";
+    private static final long expirationMs = 86400000;
 
-    public String generateToken(String username) {
+    public static String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

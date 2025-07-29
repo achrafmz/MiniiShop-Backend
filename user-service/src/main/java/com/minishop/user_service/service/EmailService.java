@@ -4,11 +4,14 @@ package com.minishop.user_service.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 //import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
@@ -67,4 +70,35 @@ public class EmailService {
         } catch (MessagingException e) {
             e.printStackTrace(); // log this in real app
         }
-    }}
+    }
+
+    public void sendLoginNotification(String to, String username) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss");
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@anmon.com"); // Remplace par ton email
+        message.setTo(to);
+        message.setSubject("Connexion à votre compte - Anmoun");
+
+        String text = String.format(
+                """
+                Bonjour %s,
+    
+                Une connexion à votre compte a été effectuée.
+    
+                📅 Date et heure : %s
+                📍 Lieu : [Adresse IP non disponible]
+                🔐 Si ce n’était pas vous, veuillez changer votre mot de passe immédiatement.
+    
+                Cordialement,
+                L'équipe Anmoun
+                """,
+                username,
+                now.format(formatter)
+        );
+
+        message.setText(text);
+        mailSender.send(message);
+    }
+}
