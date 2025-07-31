@@ -18,7 +18,6 @@ public class Category {
     @Column(unique = true, nullable = false)
     private String name;
 
-    // Chemin relatif de l'image uploadée
     @Column(name = "photo_url", nullable = false)
     private String photoUrl;
 

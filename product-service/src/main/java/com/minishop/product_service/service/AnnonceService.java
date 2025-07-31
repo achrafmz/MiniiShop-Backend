@@ -11,14 +11,24 @@ import java.util.List;
 @Service
 public class AnnonceService {
 
+    
     @Autowired
     private AnnonceRepository annonceRepository;
+
+    public List<Annonce> getAllAnnonces() {
+        return annonceRepository.findAll();
+    }
 
     public Annonce createAnnonce(Annonce annonce) {
         return annonceRepository.save(annonce);
     }
 
-    public List<Annonce> getAllAnnonces() {
-        return annonceRepository.findAll();
+    public List<Annonce> getAnnoncesByCategoryId(Long categoryId) {
+        return annonceRepository.findByCategoryId(categoryId);
     }
+
+    public List<Annonce> getAnnoncesByUsername(String username) {
+        return annonceRepository.findByUsername(username);
+    }
+
 }

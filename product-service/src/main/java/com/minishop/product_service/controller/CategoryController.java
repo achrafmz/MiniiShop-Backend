@@ -23,15 +23,12 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    // POST - Créer une catégorie + upload photo
-    // src/main/java/com/minishop/product_service/controller/CategoryController.java
     @PostMapping
     public ResponseEntity<Category> createCategory(
             @RequestParam("name") String name,
             @RequestParam("photo") MultipartFile photo) {
 
         // Créer le dossier uploads
-        String uploadDir = "uploads/";
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             try {
@@ -60,7 +57,6 @@ public class CategoryController {
         return ResponseEntity.ok(saved);
     }
 
-    // Autres routes (GET, PUT, DELETE) restent inchangées
     @GetMapping
     public java.util.List<Category> getAllCategories() {
         return categoryService.getAllCategories();

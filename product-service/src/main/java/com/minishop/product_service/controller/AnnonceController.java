@@ -34,7 +34,8 @@ public class AnnonceController {
             @RequestParam("city") String city,
             @RequestParam("address") String address,
             @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("username") String username, // ✅ Reçoit le username
+            @RequestParam("username") String username,
+            @RequestParam("categoryId") Long categoryId,
             @RequestParam(value = "photos", required = false) List<MultipartFile> photos) {
 
         Annonce annonce = new Annonce();
@@ -44,7 +45,8 @@ public class AnnonceController {
         annonce.setCity(city);
         annonce.setAddress(address);
         annonce.setPhoneNumber(phoneNumber);
-        annonce.setUsername(username); // ✅ Sauvegarde le username
+        annonce.setUsername(username);
+        annonce.setCategoryId(categoryId);
         annonce.setCreationDate(LocalDateTime.now());
         annonce.setViews(0);
 
@@ -81,4 +83,15 @@ public class AnnonceController {
     public List<Annonce> getAllAnnonces() {
         return annonceService.getAllAnnonces();
     }
+
+    @GetMapping("/category/{categoryId}")
+    public List<Annonce> getAnnoncesByCategory(@PathVariable Long categoryId) {
+        return annonceService.getAnnoncesByCategoryId(categoryId);
+    }
+
+    @GetMapping("/user/{username}")
+    public List<Annonce> getAnnoncesByUsername(@PathVariable String username) {
+        return annonceService.getAnnoncesByUsername(username);
+    }
+
 }

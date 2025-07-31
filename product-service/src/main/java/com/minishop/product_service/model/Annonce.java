@@ -27,7 +27,10 @@ public class Annonce {
     private String phoneNumber;
 
     @Column(name = "username", nullable = false)
-    private String username; // ✅ On sauvegarde le username
+    private String username;
+
+    @Column(name = "category_id")
+    private Long categoryId;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate = LocalDateTime.now();
@@ -101,6 +104,14 @@ public class Annonce {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public LocalDateTime getCreationDate() {
