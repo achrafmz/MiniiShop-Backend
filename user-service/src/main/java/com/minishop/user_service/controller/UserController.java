@@ -60,4 +60,11 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    // UserController.java
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        return userService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

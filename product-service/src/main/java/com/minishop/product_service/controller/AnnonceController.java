@@ -1,8 +1,11 @@
 // src/main/java/com/minishop/product_service/controller/AnnonceController.java
 package com.minishop.product_service.controller;
 
+import com.minishop.product_service.client.UserClient;
 import com.minishop.product_service.model.Annonce;
+import com.minishop.product_service.model.User;
 import com.minishop.product_service.service.AnnonceService;
+import com.minishop.product_service.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +23,17 @@ import java.util.List;
 @RequestMapping("/api/annonces")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AnnonceController {
+    @Autowired
+    private UserClient userClient;
 
+    @Autowired
+    private EmailService emailService;
     private final String uploadDir = "uploads/";
 
     @Autowired
     private AnnonceService annonceService;
 
+    // src/main/java/com/minishop/product_service/controller/AnnonceController.java
     @PostMapping
     public ResponseEntity<Annonce> createAnnonce(
             @RequestParam("title") String title,
@@ -38,6 +46,11 @@ public class AnnonceController {
             @RequestParam("categoryId") Long categoryId,
             @RequestParam(value = "photos", required = false) List<MultipartFile> photos) {
 
+        // 🔽 Récupérer l'email via UserClient
+        User user = userClient.getUserByUsername(username);
+        String userEmail = user.getEmail();
+
+        // Créer l'annonce
         Annonce annonce = new Annonce();
         annonce.setTitle(title);
         annonce.setDescription(description);
@@ -75,7 +88,12 @@ public class AnnonceController {
         }
         annonce.setPhotos(photoUrls);
 
+        // 🔥 Enregistrer l'annonce
         Annonce saved = annonceService.createAnnonce(annonce);
+
+        // ✅ Envoyer l'email avec les 3 paramètres
+        emailService.sendAnnoncePublishedEmail(userEmail, username, title); // ✅ title ajouté ici
+
         return ResponseEntity.ok(saved);
     }
 
