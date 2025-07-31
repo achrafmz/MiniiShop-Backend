@@ -2,7 +2,6 @@
 package com.minishop.product_service.controller;
 
 import com.minishop.product_service.model.Annonce;
-import com.minishop.product_service.model.Category;
 import com.minishop.product_service.service.AnnonceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +34,7 @@ public class AnnonceController {
             @RequestParam("city") String city,
             @RequestParam("address") String address,
             @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("userId") Long userId,
-            @RequestParam("annoncerName") String annoncerName,
-            @RequestParam("categoryId") Long categoryId,
+            @RequestParam("username") String username, // ✅ Reçoit le username
             @RequestParam(value = "photos", required = false) List<MultipartFile> photos) {
 
         Annonce annonce = new Annonce();
@@ -47,18 +44,12 @@ public class AnnonceController {
         annonce.setCity(city);
         annonce.setAddress(address);
         annonce.setPhoneNumber(phoneNumber);
-        annonce.setUserId(userId);
-        annonce.setAnnoncerName(annoncerName);
+        annonce.setUsername(username); // ✅ Sauvegarde le username
         annonce.setCreationDate(LocalDateTime.now());
         annonce.setViews(0);
 
-        // Associer la catégorie
-        Category category = new Category();
-        category.setId(categoryId);
-        annonce.setCategory(category);
-
+        // Gérer les photos
         List<String> photoUrls = new ArrayList<>();
-
         if (photos != null && !photos.isEmpty()) {
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
@@ -80,16 +71,14 @@ public class AnnonceController {
                 }
             }
         }
-
         annonce.setPhotos(photoUrls);
+
         Annonce saved = annonceService.createAnnonce(annonce);
         return ResponseEntity.ok(saved);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Annonce> getAnnonce(@PathVariable Long id) {
-        return annonceService.getAnnonceById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping
+    public List<Annonce> getAllAnnonces() {
+        return annonceService.getAllAnnonces();
     }
 }

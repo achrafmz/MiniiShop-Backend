@@ -26,27 +26,26 @@ public class Annonce {
     private String address;
     private String phoneNumber;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
-    @Column(name = "annoncer_name")
-    private String annoncerName;
+    @Column(name = "username", nullable = false)
+    private String username; // ✅ On sauvegarde le username
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate = LocalDateTime.now();
 
     private Integer views = 0;
 
-    // Liste des URLs relatives des photos uploadées
     @ElementCollection
     @CollectionTable(name = "annonce_photos", joinColumns = @JoinColumn(name = "annonce_id"))
     @Column(name = "photo_url")
     private List<String> photos = new ArrayList<>();
 
-    // Relation avec Category
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -96,20 +95,12 @@ public class Annonce {
         this.phoneNumber = phoneNumber;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getAnnoncerName() {
-        return annoncerName;
-    }
-
-    public void setAnnoncerName(String annoncerName) {
-        this.annoncerName = annoncerName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public LocalDateTime getCreationDate() {
@@ -134,21 +125,5 @@ public class Annonce {
 
     public void setPhotos(List<String> photos) {
         this.photos = photos;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }
